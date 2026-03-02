@@ -1,0 +1,1306 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "DeliveryApp API",
+        "description": "API for delivery management system",
+        "contact": {
+            "email": "admin@deliveryapp.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "8f20688904ee49d0d8739eeb08faf0b1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "cliente",
+                                            "entregador"
+                                        ],
+                                        "example": "cliente"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user",
+                "operationId": "985cd5203e2d0a820e113f2f4fdb2847",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout user",
+                "operationId": "a05022a34eef599e04fb0a5254375b84",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get current user info",
+                "operationId": "e339e0e74860c0647fd1d41bbbbc13b2",
+                "responses": {
+                    "200": {
+                        "description": "Current user info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/client/requests": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "List client's delivery requests",
+                "operationId": "79d0fc5ae68a4d395046d37777557e6d",
+                "responses": {
+                    "200": {
+                        "description": "List of requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "requests": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Create a new delivery request",
+                "operationId": "ce8daa161e35a9604b5761dccfb7bba2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "item",
+                                    "pickup_location",
+                                    "dropoff_location"
+                                ],
+                                "properties": {
+                                    "item": {
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "example": "Documento"
+                                            },
+                                            "weight_kg": {
+                                                "type": "number",
+                                                "example": 0.5
+                                            },
+                                            "height_cm": {
+                                                "type": "number",
+                                                "example": 30
+                                            },
+                                            "width_cm": {
+                                                "type": "number",
+                                                "example": 20
+                                            },
+                                            "length_cm": {
+                                                "type": "number",
+                                                "example": 5
+                                            },
+                                            "notes": {
+                                                "type": "string",
+                                                "example": "Frágil"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "pickup_location": {
+                                        "required": [
+                                            "latitude",
+                                            "longitude"
+                                        ],
+                                        "properties": {
+                                            "latitude": {
+                                                "type": "number",
+                                                "example": -23.55052
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "example": -46.633308
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "dropoff_location": {
+                                        "required": [
+                                            "latitude",
+                                            "longitude"
+                                        ],
+                                        "properties": {
+                                            "latitude": {
+                                                "type": "number",
+                                                "example": -23.561414
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "example": -46.656166
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Request created"
+                    },
+                    "400": {
+                        "description": "Client already has active request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/client/requests/{id}": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Get request details",
+                "operationId": "055d85eadad94434a60f831511b4c796",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request details"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/client/requests/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Cancel a request",
+                "operationId": "7481b5e2e800ba81cb282fa2b331d864",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request canceled"
+                    },
+                    "400": {
+                        "description": "Cannot cancel this request"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/client/requests/{id}/share": {
+            "post": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Generate share link for tracking",
+                "operationId": "67994f81fa76b51e761c67165834cab7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Share link generated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "share_token": {
+                                            "type": "string"
+                                        },
+                                        "share_url": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot share this request"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/client/requests/{id}/tracking": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Get deliverer location for tracking",
+                "operationId": "0074d7027ac189200c624a55664149e5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deliverer location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number"
+                                        },
+                                        "longitude": {
+                                            "type": "number"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No active delivery"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/profile": {
+            "get": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Get deliverer profile with motorcycle",
+                "operationId": "f1844676455180a990341ec783970535",
+                "responses": {
+                    "200": {
+                        "description": "Deliverer profile"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/moto": {
+            "put": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Update motorcycle",
+                "operationId": "a3e250daf9a7094b619b0cc5eadbc935",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "plate": {
+                                        "type": "string",
+                                        "example": "ABC-1234"
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Honda CG 160"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "Vermelha"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Motorcycle updated"
+                    },
+                    "404": {
+                        "description": "No motorcycle registered"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Register motorcycle",
+                "operationId": "e5774408e8b2c40e67923dbb6f840307",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "plate"
+                                ],
+                                "properties": {
+                                    "plate": {
+                                        "type": "string",
+                                        "example": "ABC-1234"
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Honda CG 160"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "Vermelha"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Motorcycle registered"
+                    },
+                    "400": {
+                        "description": "Already has motorcycle"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/status": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Toggle online/offline status",
+                "operationId": "001b2e4cc15e8ae2641eda4729e4c8bd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "online",
+                                            "offline"
+                                        ],
+                                        "example": "online"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated"
+                    },
+                    "400": {
+                        "description": "Cannot change status while busy"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/location": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Update current location",
+                "operationId": "6642fbe58ebdb6e42b60e78254b3e888",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "latitude",
+                                    "longitude"
+                                ],
+                                "properties": {
+                                    "latitude": {
+                                        "type": "number",
+                                        "example": -23.55052
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "example": -46.633308
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/available-requests": {
+            "get": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "List available delivery requests",
+                "operationId": "7fa22bd2626700b494a0fec40111037f",
+                "responses": {
+                    "200": {
+                        "description": "List of available requests"
+                    },
+                    "400": {
+                        "description": "Must be online to see requests"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/requests/{id}/accept": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Accept a delivery request",
+                "operationId": "af4c92f2d2c79581ae99da93c4d1c4d4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request accepted"
+                    },
+                    "400": {
+                        "description": "Cannot accept request"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/deliveries/current": {
+            "get": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Get current active delivery",
+                "operationId": "8d671ba2bb58314237700a543d55b51e",
+                "responses": {
+                    "200": {
+                        "description": "Current delivery"
+                    },
+                    "404": {
+                        "description": "No active delivery"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/deliveries/{id}/checkin": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Check in to start delivery",
+                "operationId": "4f974f682b6a3a2e531f15d8d9474202",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_code"
+                                ],
+                                "properties": {
+                                    "checkin_code": {
+                                        "type": "string",
+                                        "example": "ABC123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Checked in successfully"
+                    },
+                    "400": {
+                        "description": "Invalid check-in code or cannot check in"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/deliveries/{id}/complete": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Complete delivery with checkout code",
+                "operationId": "5ebe594e2ea4225d2eafb8a5ac55ca35",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkout_code"
+                                ],
+                                "properties": {
+                                    "checkout_code": {
+                                        "type": "string",
+                                        "example": "XYZ789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delivery completed"
+                    },
+                    "400": {
+                        "description": "Invalid checkout code or cannot complete"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/deliverer/deliveries/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Deliverer"
+                ],
+                "summary": "Cancel active delivery",
+                "operationId": "6a09293f3a412c2b645a3d0f71d776be",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delivery canceled"
+                    },
+                    "400": {
+                        "description": "Cannot cancel"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "operationId": "49ad9b3c4e27e8cdc36d16659e67201e",
+                "responses": {
+                    "200": {
+                        "description": "API is running",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "example": "2026-01-29T22:55:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/root/logs": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "Get canceled requests log",
+                "operationId": "3f1f1df983e01d9db9234387d35d1429",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Canceled requests log"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/root/stats": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "Get system statistics",
+                "operationId": "a4227dc5fc191272401c92263b2edb28",
+                "responses": {
+                    "200": {
+                        "description": "System statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "type": "object"
+                                        },
+                                        "requests": {
+                                            "type": "object"
+                                        },
+                                        "deliveries": {
+                                            "type": "object"
+                                        },
+                                        "locations": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/root/users": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "List all users",
+                "operationId": "65035070fbb00e592e0757b07bdf0f1a",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "root",
+                                "cliente",
+                                "entregador"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/root/deliveries": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "List all deliveries with filters",
+                "operationId": "6769a33631227a00f5f6356250dfc212",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "checkin_pending",
+                                "in_progress",
+                                "completed",
+                                "canceled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of deliveries"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/root/status-history": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "Get full status history",
+                "operationId": "3af18ed412c6204b566e0abef09a5c44",
+                "parameters": [
+                    {
+                        "name": "entity_type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "cliente",
+                                "entregador",
+                                "solicitacao",
+                                "entrega"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status history"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/track/{token}": {
+            "get": {
+                "tags": [
+                    "Tracking"
+                ],
+                "summary": "Get delivery status and location by share token (public)",
+                "operationId": "d032e46e035a5be72e3b1f76a0a1a57f",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delivery tracking info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "deliverer_location": {
+                                            "type": "object"
+                                        },
+                                        "pickup_location": {
+                                            "type": "object"
+                                        },
+                                        "dropoff_location": {
+                                            "type": "object"
+                                        },
+                                        "checkout_code": {
+                                            "type": "string",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Invalid or expired share link"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Enter your Sanctum token",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Client",
+            "description": "Client"
+        },
+        {
+            "name": "Deliverer",
+            "description": "Deliverer"
+        },
+        {
+            "name": "Health",
+            "description": "Health"
+        },
+        {
+            "name": "Root",
+            "description": "Root"
+        },
+        {
+            "name": "Tracking",
+            "description": "Tracking"
+        }
+    ]
+}
